@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"text/template"
+	"github.com/gorilla/mux"
 
 	// "encoding/json"
 	// "math/rand"
@@ -11,13 +12,14 @@ import (
 
 	"net/http"
 
-	"github.com/gorilla/mux"
 )
 
 type FireEmblemCharacter struct {
+	name string
 }
 
 type Waifu struct {
+
 }
 
 func main() {
@@ -32,7 +34,7 @@ func main() {
 	goRouter.HandleFunc("/myapi/FireEmblemCharacters", getFireEmblemCharacters).Methods("GET")
 	goRouter.HandleFunc("/myapi/{character}", getFireEmblemCharacter).Methods("GET")
 	goRouter.HandleFunc("/myapi/addCharacter", addCharacter).Methods("POST")
-	goRouter.HandleFunc("/myapi/addWaifu", addWaifu).Methods("PUT")
+	goRouter.HandleFunc("/myapi/addWaifu", addWaifu).Methods("GET")
 	goRouter.HandleFunc("/myapi/deleteCharacter", deleteCharacter).Methods("DELETE")
 
 	fmt.Println("Server is running!")
@@ -40,12 +42,14 @@ func main() {
 }
 
 func landingPage(writer http.ResponseWriter, request *http.Request) {
-
+	// request.FormValue("name")
+	fmt.Fprintf(writer, "landing")
+	//renderTemplate(writer, request, "templates/landingPage.html")
 }
 
 //GET request
 func getFireEmblemCharacters(writer http.ResponseWriter, request *http.Request) {
-	fmt.Fprint(writer, "here are the characters!")
+	renderTemplate(writer, request, "templates/feCharacters.html")
 }
 
 //GET request
@@ -65,7 +69,7 @@ func deleteCharacter(writer http.ResponseWriter, request *http.Request) {
 
 //PUT request
 func addWaifu(writer http.ResponseWriter, request *http.Request) {
-	fmt.Println("waifu called")
+	fmt.Fprintf(writer, "waifu called")
 	renderTemplate(writer, request, "templates/waifu.html")
 }
 

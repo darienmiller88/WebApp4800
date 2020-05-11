@@ -1,1 +1,1 @@
-web: go build && .\WebAppRedux.exe
+web: WebAppRedux

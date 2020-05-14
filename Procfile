@@ -1,1 +1,1 @@
-web: WebAppRedux
+web: go run server.go

@@ -36,13 +36,13 @@ func main() {
 	goRouter.HandleFunc("/myapi/deleteCharacter", deleteCharacter).Methods("DELETE")
 
 	fmt.Println("Server is running!")
-	log.Fatal(http.ListenAndServe(":3000", goRouter))
+	log.Fatal(http.ListenAndServe(getPort("3000"), goRouter))
 }
 
 func landingPage(writer http.ResponseWriter, request *http.Request) {
 	// request.FormValue("name")
-	fmt.Fprintf(writer, "landing")
-	//renderTemplate(writer, request, "templates/landingPage.html")
+	//fmt.Fprintf(writer, "landing")
+	renderTemplate(writer, request, "templates/landingPage.html")
 }
 
 //GET request

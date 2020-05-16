@@ -1,15 +1,45 @@
 <!DOCTYPE html>
 <html>
     <head>
+         <!-- NOTE! In order for my backend code to appear in these control blocks, the struct fields MUUUUST
+            start with a capital!!! NO EXCPERIONS! -->
         <title>
-            Welcome
+            {{ .Welcome }}
         </title>       
         <link rel = "stylesheet" href = "./static/css/pic.css">
     </head>
 
     <body>
-        <img src = "./static/img/colors.jpg" id = "bg" alt = "colors.jpg">
-        <!-- <div class = "bg"></div> -->
-        <!-- <h1>hello world</h1> -->
+        <img src = "./static/img/colors.jpg"  alt = "colors" style = "width:100%;">
+        <div class="bottom-left">Bottom Left</div>
+
+        {{range .Names}}
+            <ol>
+                <li>
+                   <h3> {{.}} </h3>
+                </li>
+            </ol>
+        {{end}}
+
+        <ol>
+            <li>1957: Fortran</li>
+            <li>1958: Lisp</li>
+            <li>1964: BASIC</li>
+            <li>1968: Logo</li>
+            <li>1972: C</li>
+            <li>1975: Scheme</li>
+            <li>1978: SQL</li>
+            <li>1980: C++</li>
+            <li>1983: Ada</li>
+            <li>1986: Objective-C</li>
+            <li>1991: Python</li>
+            <li>1995: Java</li>
+            <li>1995: JavaScript</li>
+            <li>2003: Groovy</li>
+            <li>2009: Go</li>
+            <li>2014: Swift</li>
+        </ol>
+
+
     </body>
 </html>

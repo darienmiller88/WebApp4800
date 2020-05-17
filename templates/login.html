@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./static/css/login.css">
+    </head>
+
+    <body>
+        <div class = "words">
+            <h2>Login Form</h2>
+        </div>
+
+        <form method = "POST" action = "/">
+        
+            <div class="container">
+                <label for="uname" class = "words"><b> Username</b></label>
+                <input type="text" placeholder="Enter Username" name="uname" required>
+
+                <label for="psw" class = "words"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="psw" required>
+                    
+                <button type="submit">Login</button>
+                <label>
+                </label>
+            </div>
+
+            <div class = "words">
+                <h3>
+                    Not registered? <a href = "/signup"> Create an account</a>
+                </h3>
+            </div>
+            
+            <div class="container" style="background-color:#f1f1f1">
+                <a href = "/">
+                    <button type="button" class="cancelbtn">Go Home</button>
+                </a>
+            </div>
+        </form>
+
+    </body>
+</html>

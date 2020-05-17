@@ -1,14 +1,44 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>
-            signup
-        </title>       
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./static/css/login.css">
     </head>
 
     <body>
-        <h1>
-            sign up!
-        </h1>
+        <div class = "words">
+            <h2>Signup Form</h2>
+        </div>
+
+        <form method = "POST" action = "/">
+        
+            <div class="container">
+                <label for="psw" class = "words"><b>First Name</b></label>
+                <input type = "text" placeholder = "First Name" name="firstname" required>
+
+                <label for="psw" class = "words"><b>Last Name</b></label>
+                <input type="text" placeholder = "Last Name" name="lastname" required>
+
+                <label for="uname" class = "words"><b> Username</b></label>
+                <input type="text" placeholder="Enter Username" name="username" required>
+
+                <label for="psw" class = "words"><b>Email</b></label>
+                <input type="text" placeholder="Enter Email" name="email" required>
+
+                <label for="psw" class = "words"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" name="password" required>
+
+                <button type="submit">Click to Apply!</button>
+                <label>
+                </label>
+            </div>
+            
+            <div class="container" style="background-color:#f1f1f1">
+                <a href = "/">
+                    <button type="button" class="cancelbtn">Go Home</button>
+                </a>
+            </div>
+        </form>
+
     </body>
 </html>

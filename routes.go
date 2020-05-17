@@ -9,59 +9,98 @@ import (
 )
 
 type Routes struct {
-	myRouter *mux.Router
+	MyRouter *mux.Router
+	UserData User
+	db MySQL
 }
 
-//The structs that I am using must start with a capital
-type Data struct {
-	Welcome string
-	Names   []string
+type User struct{
+	FirstName, LastName, Password, Email, Username, Welcome string
+	//Done bool
 }
 
 //Method to assign a new mux router to an instance of a "Routes" object and
 func (r *Routes) createRoute() {
-	r.myRouter = mux.NewRouter()
+	r.MyRouter = mux.NewRouter()
+	r.db.connectToDB()
+	// r.UserData = User{
+	// 	Name: "Anonymous", 
+	// 	Country: "USA",
+	// 	Welcome: "Landing",
+	// 	Done: false,
+	// }
 
 	//This is the golang way of serving static files lmao
-	r.myRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	r.MyRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
 	//routes for web app
-	r.myRouter.HandleFunc("/", landingPage).Methods("GET")
-	r.myRouter.HandleFunc("/signup", signUp).Methods("GET")
-	r.myRouter.HandleFunc("/aboutus", aboutUs).Methods("GET")
+	r.MyRouter.HandleFunc("/", r.landingPage).Methods("GET")
+	r.MyRouter.HandleFunc("/login", r.verifyLogIn).Methods("POST")
+	r.MyRouter.HandleFunc("/login", r.loginPage).Methods("GET")
+	r.MyRouter.HandleFunc("/signup", r.signUp).Methods("GET")
+	r.MyRouter.HandleFunc("/aboutus", r.aboutUs).Methods("GET")
+	r.MyRouter.HandleFunc("/", r.deleteStuff).Methods("DELETE")
+
 }
 
-func landingPage(writer http.ResponseWriter, request *http.Request) {
-	// request.FormValue("name")
-	//fmt.Fprintf(writer, "landing")
+//GET request
+func (r *Routes) landingPage(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("landing page called")
-	renderTemplate(writer, request, "templates/landingPage.html", Data{
-		Welcome: "Landing",
-		Names: []string{
-			"Darien",
-			"Denise",
-			"Dalton",
-			"Derick",
-			"Doflamingo",
-		},
-	})
+	r.renderTemplate(writer, request, "templates/landingPage.html", r.UserData)
+}
+
+func (r *Routes) loginPage(writer http.ResponseWriter, request *http.Request) {
+	fmt.Println("login page called")
+	r.renderTemplate(writer, request, "templates/login.html", r.UserData)
+}
+
+//POST request
+func (r *Routes) verifyLogIn(writer http.ResponseWriter, request *http.Request){
+	fmt.Println("POST request called!")
+	// Call ParseForm() to parse the raw query and update request.PostForm and request.Form.
+	if err := request.ParseForm(); err != nil {
+		fmt.Fprintf(writer, "ParseForm() err: %v", err)
+		return
+	}
+
+	fmt.Printf("Post from website! request.PostFrom = %v\n", request.PostForm)
+	r.UserData.FirstName = request.PostForm.Get("firstName")
+	r.UserData.LastName = request.PostForm.Get("lastName")
+	r.UserData.Password = request.PostForm.Get("password")
+	r.UserData.Email = request.PostForm.Get("email")
+
+	r.db.insertIntoDB(r.UserData.FirstName, r.UserData.LastName, r.UserData.Password, r.UserData.Email)
+	r.redirectHome(writer, request)
+	// name := request.FormValue("name")
+	// address := request.FormValue("address")
+	// fmt.Fprintf(writer, "Name = %s\n", name)
+	// fmt.Fprintf(writer, "Address = %s\n", address)
 }
 
 //GET request
-func signUp(writer http.ResponseWriter, request *http.Request) {
+func (r *Routes) signUp(writer http.ResponseWriter, request *http.Request){
 	fmt.Println("sign up page called")
-	renderTemplate(writer, request, "templates/signup.html", nil)
+	r.renderTemplate(writer, request, "templates/signup.html", nil)
 }
 
 //GET request
-func aboutUs(writer http.ResponseWriter, request *http.Request) {
+func (r *Routes) aboutUs(writer http.ResponseWriter, request *http.Request){
 	fmt.Println("about us page called")
-	renderTemplate(writer, request, "templates/aboutUs.html", nil)
+	r.renderTemplate(writer, request, "templates/aboutUs.html", nil)
 }
 
-func renderTemplate(response http.ResponseWriter, request *http.Request, fileName string, data interface{}) {
+func (r *Routes) redirectHome(writer http.ResponseWriter, request *http.Request) {
+    http.Redirect(writer, request, "/", 301)
+}
+
+func (r *Routes) deleteStuff(writer http.ResponseWriter, request *http.Request){
+	fmt.Println("Delete called!")
+}
+
+func (r *Routes) renderTemplate(response http.ResponseWriter, request *http.Request, fileName string, data interface{}){
 	myTemplate := template.Must(template.ParseFiles(fileName))
 	if err := myTemplate.Execute(response, data); err != nil {
-		http.Error(response, err.Error(), http.StatusInternalServerError)
+		fmt.Println("error :(")
+		//http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
 }

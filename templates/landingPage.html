@@ -6,40 +6,103 @@
         <title>
             {{ .Welcome }}
         </title>       
-        <link rel = "stylesheet" href = "./static/css/pic.css">
+        <meta charset = "UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous"/>
+        <link rel = "stylesheet" href = "./static/css/landingPage.css">
     </head>
 
     <body>
-        <img src = "./static/img/colors.jpg"  alt = "colors" style = "width:100%;">
-        <div class="bottom-left">Bottom Left</div>
 
-        {{range .Names}}
-            <ol>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+              <div class="navbar-header">
+                <a class="navbar-brand" href="">Awesome Bank</a>
+                <button
+                  type="button"
+                  class="navbar-toggler"
+                  data-toggle="collapse"
+                  data-target="#navbar"
+                  aria-expanded="false"
+                  aria-controls="navbar"
+                >
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+              </div>
+              <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav">
+                  <li>
+                    <a class="nav-link active" href=""> Home<span class="sr-only">(current)</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="nav-link" href="">About</a>
+                  </li>
+                  <li>
+                    <a class="nav-link" href="">Contact</a>
+                  </li>
+                </ul>
+                <ul class="nav navbar-nav ml-auto">
+                  <li>
+                   
+                    <a class="nav-link" href = "/login"> <button class = "button login"> Log in </button> </a>
+                  </li>
+                  <li>
+                    <a class="nav-link" href = "/signup"> <button class = "button signup"> Apply Now </button>  </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+
+          <div id="content">
+           
+                <div class="col-lg-12">
+                  <h3>Bank, budget and earn <br> 30x the national average <br> with 2.02% APY.</h3>
+                </div>
+          
+          </div>
+        <!-- <div>
+            <img src = "./static/img/colors.jpg"  alt = "colors" style = "width:100%;">
+        </div> -->
+
+        <!-- <div>
+            <form method = "POST" action = "/">     
+                <label> First Name </label>
+                <input name = "firstName" type = "text" value = "" /> <br><br>
+
+                <label> Last Name </label>
+                <input name = "lastName" type = "text" value = "" /> <br><br>
+
+                <label> Password </label>
+                <input name = "password" type = "text" value = "" /> <br><br>
+
+                <label> Email </label>
+                <input name = "email" type = "text" value = "" /> <br><br>
+
+                <input type = "submit" value = "submit" />
+            </form>
+
+            <br><br>
+            <form method = "DELETE" action = "/">
+                <label> id </label>
+                <input name = "id" type = "text" value = "" /> <br><br>
+
+                <input type = "submit" value = "delete" />
+            </form>
+        </div>
+
+        <a href = "" onclick = "return confirm('Are you sure')"> click me</a>
+        <h1> {{ .FirstName}} {{ .LastName }} {{ .Password }} {{ .Email }} </h1> -->
+        <!-- {{range .Names}}
+            <ul>
                 <li>
-                   <h3> {{.}} </h3>
+                    <h3>{{.}}</h3>
                 </li>
-            </ol>
-        {{end}}
-
-        <ol>
-            <li>1957: Fortran</li>
-            <li>1958: Lisp</li>
-            <li>1964: BASIC</li>
-            <li>1968: Logo</li>
-            <li>1972: C</li>
-            <li>1975: Scheme</li>
-            <li>1978: SQL</li>
-            <li>1980: C++</li>
-            <li>1983: Ada</li>
-            <li>1986: Objective-C</li>
-            <li>1991: Python</li>
-            <li>1995: Java</li>
-            <li>1995: JavaScript</li>
-            <li>2003: Groovy</li>
-            <li>2009: Go</li>
-            <li>2014: Swift</li>
-        </ol>
-
+            </ul>
+        {{end}} -->
 
     </body>
 </html>

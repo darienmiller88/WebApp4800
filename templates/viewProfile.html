@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel = "stylesheet" href = "./static/css/viewProfile.css">
+        <title>profile</title>
+    </head>
+    <body>
+        <h1>
+            Hello {{ .FirstName }} {{ .LastName}}! Here is your login information!
+        </h1>
+
+        <h2>
+            Email: {{ .Email}} <br>
+            Password: {{ .Password }} <br>
+            Username: {{ .Username }} <br>
+
+            And Finally, here are your accounts:
+            {{range .UserAccounts}}
+                <div class = "account">
+                    <h3 class = "name"> {{ .accountType }} </h3>
+                    <h3 class = "name"> {{ .accountName }} </h3>
+                    <span class="price"> ${{.accountBalance}}</span>
+                </div>
+            {{end}}
+        </h2>
+
+        <div class="container" style="background-color:#f1f1f1">
+            <a href = "/">
+                <button type="button" class="cancelbtn"> sign out</button>
+            </a>
+        </div>
+    
+        
+    </body>
+</html>

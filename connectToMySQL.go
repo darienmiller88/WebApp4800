@@ -3,127 +3,100 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	
+	"log"
+
 	_ "github.com/go-sql-driver/mysql"
 )
 
-type MySQL struct{
-	db *sql.DB
-}
 
 //In my database, the users that are inserted are meant to be applicants in my bank account website
 
 //Method to connect to a mysql database
-func (m *MySQL) connectToDB(){
+func connectToDB() *sql.DB{
 	dBConnection, err := sql.Open("mysql", "root:nintendowiiu000@/webapp")
 	if err != nil {
-		fmt.Println("Connection Failed!!")
-		return
+		log.Fatal("Connection Failed!!")
 	}
 
+	//Ping the database to make sure the connection is stable.
 	err = dBConnection.Ping()
 	if err != nil {
-		fmt.Println("Ping Failed!!")
-		return
+		log.Fatal("Ping Failed!!")
 	}
 
-	fmt.Println("CONNECTED TO MYSQL WOOO")
-	m.db = dBConnection
-}
-
-func (m *MySQL) getEmail(userName string) string {
-	var emailColumn string 
-	emailResult := "SELECT email FROM users WHERE userName = ?"
-
-	numRowsForEmail := m.db.QueryRow(emailResult, userName)
-	emailErr := numRowsForEmail.Scan(&emailColumn)
-	
-	if emailErr != nil {
-		if emailErr == sql.ErrNoRows{
-			return ""
-		}
-		panic(emailErr)
-	}
-
-	return emailColumn
-}
-
-func (m *MySQL) checkUserNameAndPassword(userName string, password string) bool{
-	var userNameColumn, passwordColumn string 
-	checkUserName := "SELECT userName FROM users WHERE userName = ?"
-	checkPassword := "SELECT password FROM users WHERE password = ?"
-	
-	//Query for username
-	numRowsForUserName := m.db.QueryRow(checkUserName, userName)
-	userNameErr := numRowsForUserName.Scan(&userNameColumn)
-
-	//and then password
-	numRowsForPassword := m.db.QueryRow(checkPassword, password)
-	passWordErr := numRowsForPassword.Scan(&passwordColumn)
-
-	if userNameErr != nil || passWordErr != nil {
-		if userNameErr == sql.ErrNoRows || passWordErr == sql.ErrNoRows{
-
-			return false
-		}
-		panic(userNameErr)
-	}
-
-	return true
-} 
-
-func (m *MySQL) getUserByID(id int) bool{
-	// user, err := m.db.Query("SELECT * FROM users WHERE id=?", id)
-
-	// if err != nil {
-	// 	panic(err.Error())
-	// }
-	
-	// fmt.Println(user)
-	var column string 
-	sqlStatement := "SELECT firstName FROM users WHERE id = ?"
-	row := m.db.QueryRow(sqlStatement, id)
-	err := row.Scan(&column)
-
-	if err != nil {
-		if err == sql.ErrNoRows {
-			return false
-		}
-		panic(err)
-	}
-
-	fmt.Println(column)
-	return true
+	return dBConnection
 }
 
 //CREATE - This function will take data from the front end, and add it into the database
-func(m *MySQL) insertIntoDB(firstName string, lastName string, password string, email string, userName string){
-	insertResult, err := m.db.Prepare("INSERT INTO users(firstName, lastName, password, email, userName) VALUES(?,?,?,?,?)")
+func insertIntoDB(user User){
+	db := connectToDB()
+	insertIntoSQL, insertErr := db.Prepare("INSERT INTO users(firstName, lastName, password, email, userName) VALUES(?,?,?,?,?)")
+	errorHandleSQLQuery(insertErr)
 	
-	if err != nil {
-		panic(err.Error())
-	}
+	result, resultErr := insertIntoSQL.Exec(user.FirstName, user.LastName, user.Password, user.Email, user.Password)
+	errorHandleSQLQuery(resultErr)
 
-	result, _ := insertResult.Exec(firstName, lastName, password, email, userName)
+	db.Close()
 	fmt.Println(result)
 }
 
-//DELETE - will allow me to delete a user based on their ID.
-func (m *MySQL) deleteRowByID(id int){
-	if(m.getUserByID(id)){
-		deleteResult, err := m.db.Prepare("DELETE FROM users WHERE id=?")
+//READ - This function will return a row with the given information for a user with "userName"
+func getUserByUserName(userName string) User {
+	db := connectToDB()
 
-		if err != nil {
-			panic(err.Error())
+	var user User 
+	userSQLQuery := "SELECT * FROM users WHERE userName = ?"
+
+	//Query the row in the table to return a row with the following userName
+	var numRowsForUser *sql.Row = db.QueryRow(userSQLQuery, userName)
+	var userErr error = numRowsForUser.Scan(&user.FirstName, &user.LastName, &user.Password, &user.Email, &user.Username)
+	
+	if userErr != nil {
+		//If there is no user for the username the user entered, return an empty User object
+		if userErr == sql.ErrNoRows{
+			return User{LoginUnsuccessful: true}
 		}
-
-		deleteResult.Exec(id)
-	}else{
-		fmt.Printf("Zero rows found for id: %d", id)
+		panic(userErr)
 	}
 
+	db.Close()
+	return user
 }
 
-func (m *MySQL) closeDB(){
-	m.db.Close()
+//UPDATE - This function will update the old password with a new password for the user
+func updateUserPassword(newPassWord string, username string){
+	db := connectToDB()
+
+	updateSQLQuery, updateErr := db.Prepare("UPDATE users SET password = ? WHERE userName = ?")
+	errorHandleSQLQuery(updateErr)
+
+	result, resultErr := updateSQLQuery.Exec(newPassWord, username)
+	errorHandleSQLQuery(resultErr)
+
+	fmt.Println(result)
+	db.Close()
+}
+
+//DELETE - will allow me to delete a user based on their username.
+func deleteRowByUserName(userName string){
+	db := connectToDB()
+	
+	if(getUserByUserName(userName).Username == ""){
+		fmt.Printf("Zero rows found for userName: %s", userName)
+	}else{
+		deleteSQLQuery, deleteErr := db.Prepare("DELETE FROM users WHERE id=?")
+		errorHandleSQLQuery(deleteErr)
+
+		result, resultErr := deleteSQLQuery.Exec(userName)
+		errorHandleSQLQuery(resultErr)
+
+		fmt.Println(result)
+	}
+	db.Close()
+}
+
+func errorHandleSQLQuery(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
 }

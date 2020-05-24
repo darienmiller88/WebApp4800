@@ -4,7 +4,7 @@
          <!-- NOTE! In order for my backend code to appear in these control blocks, the struct fields MUUUUST
             start with a capital!!! NO EXCPERIONS! -->
         <title>
-            {{ .Welcome }}
+            Landing 
         </title>       
         <meta charset = "UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -32,18 +32,20 @@
                 </button>
               </div>
               <div class="collapse navbar-collapse" id="navbar">
+
                 <ul class="nav navbar-nav">
                   <li>
                     <a class="nav-link active" href=""> Home<span class="sr-only">(current)</span>
                     </a>
                   </li>
                   <li>
-                    <a class="nav-link" href="">About</a>
+                    <a class="nav-link" href = "/aboutus">About</a>
                   </li>
                   <li>
                     <a class="nav-link" href="">Contact</a>
                   </li>
                 </ul>
+
                 <ul class="nav navbar-nav ml-auto">
                   <li>
                    
@@ -64,45 +66,7 @@
                 </div>
           
           </div>
-        <!-- <div>
-            <img src = "./static/img/colors.jpg"  alt = "colors" style = "width:100%;">
-        </div> -->
-
-        <!-- <div>
-            <form method = "POST" action = "/">     
-                <label> First Name </label>
-                <input name = "firstName" type = "text" value = "" /> <br><br>
-
-                <label> Last Name </label>
-                <input name = "lastName" type = "text" value = "" /> <br><br>
-
-                <label> Password </label>
-                <input name = "password" type = "text" value = "" /> <br><br>
-
-                <label> Email </label>
-                <input name = "email" type = "text" value = "" /> <br><br>
-
-                <input type = "submit" value = "submit" />
-            </form>
-
-            <br><br>
-            <form method = "DELETE" action = "/">
-                <label> id </label>
-                <input name = "id" type = "text" value = "" /> <br><br>
-
-                <input type = "submit" value = "delete" />
-            </form>
-        </div>
-
-        <a href = "" onclick = "return confirm('Are you sure')"> click me</a>
-        <h1> {{ .FirstName}} {{ .LastName }} {{ .Password }} {{ .Email }} </h1> -->
-        <!-- {{range .Names}}
-            <ul>
-                <li>
-                    <h3>{{.}}</h3>
-                </li>
-            </ul>
-        {{end}} -->
+        
 
     </body>
 </html>

@@ -23,14 +23,12 @@
                 <label>
                 </label>
             </div>
-
-            <div>
-                {{if .LoginSuccessful}}
-                    
-                {{else}}
-
-                {{end}}
-            </div>
+            
+            {{if .LoginUnsuccessful}}
+                <div>
+                    <h4 style = "color:red;"> Username or Password incorrect, try again</h4>
+                </div>            
+            {{end}}
 
             <div class = "words">
                 <h3>

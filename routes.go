@@ -11,31 +11,25 @@ import (
 type Routes struct {
 	MyRouter *mux.Router
 	UserData User
-	db MySQL
+	
 }
 
-//A user in my web app will have the following information, typical of a bank customer
+//User - A user in my web app will have the following information, typical of a bank customer
 type User struct{
 	FirstName, LastName, Password, Email, Username, Welcome string
 	UserAccounts []Account
-	LoginSuccessful bool
+	LoginUnsuccessful, TakenUserName bool
 }
 
 type Account struct{
 	accountType, accountName string
 	accountBalance float64
+	accountID int64
 }
 
 //Method to assign a new mux router to an instance of a "Routes" object and
 func (r *Routes) createRoute() {
 	r.MyRouter = mux.NewRouter()
-	r.db.connectToDB()
-	// r.UserData = User{
-	// 	Name: "Anonymous", 
-	// 	Country: "USA",
-	// 	Welcome: "Landing",
-	// 	Done: false,
-	// }
 
 	//This is the golang way of serving static files lmao
 	r.MyRouter.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
@@ -49,12 +43,12 @@ func (r *Routes) createRoute() {
 	r.MyRouter.HandleFunc("/aboutus", r.aboutUs).Methods("GET")
 	r.MyRouter.HandleFunc("/viewprofile", r.viewProfile).Methods("GET")
 	r.MyRouter.HandleFunc("/viewprofile/delete", r.deleteStuff).Methods("DELETE")
-
 }
 
 //GET request
 func (r *Routes) landingPage(writer http.ResponseWriter, request *http.Request) {
 	fmt.Println("landing page called")
+	r.UserData.TakenUserName, r.UserData.LoginUnsuccessful = false, false
 	r.renderTemplate(writer, request, "templates/landingPage.html", r.UserData)
 }
 
@@ -71,6 +65,7 @@ func (r *Routes) loginPage(writer http.ResponseWriter, request *http.Request) {
 //POST request
 func (r *Routes) verifyLogIn(writer http.ResponseWriter, request *http.Request){
 	fmt.Println("POST request called!")
+
 	// Call ParseForm() to parse the raw query and update request.PostForm and request.Form.
 	if err := request.ParseForm(); err != nil {
 		fmt.Fprintf(writer, "ParseForm() err: %v", err)
@@ -78,24 +73,22 @@ func (r *Routes) verifyLogIn(writer http.ResponseWriter, request *http.Request){
 	}
 
 	fmt.Printf("Post from website! request.PostFrom = %v\n", request.PostForm)
-	tempUserName := request.PostForm.Get("username")
-	tempPassword := request.PostForm.Get("password")
+	var tempUserName string = request.PostForm.Get("username")
+	var tempPassword string = request.PostForm.Get("password")
+	r.UserData = getUserByUserName(tempUserName)
 
-	//If the user entered the wrong user name OR password, redirect them back to the login page
-	if(!r.db.checkUserNameAndPassword(tempUserName, tempPassword)){
-		http.Redirect(writer, request, "/login", 301)
+	//If the user entered the right password and username, redirect them back to the viewProfile page.
+	if(r.UserData.Username == tempUserName && r.UserData.Password == tempPassword){
+		http.Redirect(writer, request, "/viewprofile", http.StatusFound)
 	}else{
-		r.UserData.Username = tempUserName
-		r.UserData.Password = tempPassword
-		r.UserData.Email = r.db.getEmail(tempUserName)
-		http.Redirect(writer, request, "/viewprofile", 301)
+		http.Redirect(writer, request, "/login", http.StatusFound)
 	}
 }
 
 //GET request
 func (r *Routes) signUp(writer http.ResponseWriter, request *http.Request){
 	fmt.Println("sign up page called")
-	r.renderTemplate(writer, request, "templates/signup.html", nil)
+	r.renderTemplate(writer, request, "templates/signup.html", r.UserData)
 }
 
 func (r *Routes) verifySignUp(writer http.ResponseWriter, request *http.Request){
@@ -115,11 +108,17 @@ func (r *Routes) verifySignUp(writer http.ResponseWriter, request *http.Request)
 	r.UserData.Email = request.PostForm.Get("email")
 	r.UserData.Username = request.PostForm.Get("username")
 
+	//If the user name is taken, redirect the user back to the signup page
+	if(getUserByUserName(r.UserData.Username).Username != ""){
+		r.UserData.TakenUserName = true
+		http.Redirect(writer, request, "/signup", http.StatusFound)
+	}
+
 	//Insert it into our database...
-	r.db.insertIntoDB(r.UserData.FirstName, r.UserData.LastName, r.UserData.Password, r.UserData.Email, r.UserData.Username)
+	insertIntoDB(r.UserData)
 
 	//And redirect the user to the "view profile" where they can see their information
-	http.Redirect(writer, request, "/viewprofile", 301)
+	http.Redirect(writer, request, "/viewprofile", http.StatusFound)
 }
 
 //GET request

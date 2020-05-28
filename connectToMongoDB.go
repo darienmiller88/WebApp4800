@@ -26,7 +26,7 @@ type Message struct{
 
 func (m *MongoDBInstance) connectToMongoDB(){
 	m.client, m.err = mongo.NewClient(options.Client().ApplyURI(
-		"mongodb+srv://darienmiller88:nintendowiiu000@webapp-gamc9.gcp.mongodb.net/test?retryWrites=true&w=majority",
+		"mongodb+srv://foobar:password@webapp-gamc9.gcp.mongodb.net/test?retryWrites=true&w=majority",
 	))
 
     if m.err != nil {

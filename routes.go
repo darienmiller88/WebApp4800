@@ -77,10 +77,12 @@ func (r *Routes) verifyLogIn(writer http.ResponseWriter, request *http.Request){
 	var tempPassword string = request.PostForm.Get("password")
 	r.UserData = getUserByUserName(tempUserName)
 
+	fmt.Println(r.UserData)
 	//If the user entered the right password and username, redirect them back to the viewProfile page.
 	if(r.UserData.Username == tempUserName && r.UserData.Password == tempPassword){
 		http.Redirect(writer, request, "/viewprofile", http.StatusFound)
 	}else{
+		r.UserData.LoginUnsuccessful = true
 		http.Redirect(writer, request, "/login", http.StatusFound)
 	}
 }
@@ -96,12 +98,13 @@ func (r *Routes) verifySignUp(writer http.ResponseWriter, request *http.Request)
 
 	// Call ParseForm() to parse the raw query and update request.PostForm and request.Form.
 	if err := request.ParseForm(); err != nil {
+		fmt.Println()
 		fmt.Fprintf(writer, "ParseForm() err: %v", err)
 		return
 	}
 
 	//obtain the users informatino from signing up...
-	fmt.Printf("Post from website! request.PostFrom = %v\n", request.PostForm)
+	fmt.Printf("Post from website in signup function! request.PostFrom = %v\n", request.PostForm)
 	r.UserData.FirstName = request.PostForm.Get("firstname")
 	r.UserData.LastName = request.PostForm.Get("lastname")
 	r.UserData.Password = request.PostForm.Get("password")
@@ -139,7 +142,6 @@ func (r *Routes) deleteStuff(writer http.ResponseWriter, request *http.Request){
 func (r *Routes) renderTemplate(response http.ResponseWriter, request *http.Request, fileName string, data interface{}){
 	myTemplate := template.Must(template.ParseFiles(fileName))
 	if err := myTemplate.Execute(response, data); err != nil {
-		fmt.Println("error :(")
-		//http.Error(response, err.Error(), http.StatusInternalServerError)
+		http.Error(response, err.Error(), http.StatusInternalServerError)
 	}
 }

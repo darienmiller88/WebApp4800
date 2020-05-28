@@ -33,7 +33,7 @@ func insertIntoDB(user User){
 	insertIntoSQL, insertErr := db.Prepare("INSERT INTO users(firstName, lastName, password, email, userName) VALUES(?,?,?,?,?)")
 	errorHandleSQLQuery(insertErr)
 	
-	result, resultErr := insertIntoSQL.Exec(user.FirstName, user.LastName, user.Password, user.Email, user.Password)
+	result, resultErr := insertIntoSQL.Exec(user.FirstName, user.LastName, user.Password, user.Email, user.Username)
 	errorHandleSQLQuery(resultErr)
 
 	db.Close()
@@ -54,7 +54,7 @@ func getUserByUserName(userName string) User {
 	if userErr != nil {
 		//If there is no user for the username the user entered, return an empty User object
 		if userErr == sql.ErrNoRows{
-			return User{LoginUnsuccessful: true}
+			return User{}
 		}
 		panic(userErr)
 	}

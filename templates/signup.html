@@ -22,11 +22,11 @@
                 <label for="uname" class = "words"><b> Username</b></label>
                 <input type="text" placeholder="Enter Username" name="username" required>
 
-                {{if .TakenUserName}}
-                    <div>
-                        <h4 style = "color:red;"> Username {{ .Username}} is already taken! </h4>
-                    </div>            
-                {{end}}
+            {{if .TakenUserName}}
+                <div>
+                    <h4 style = "color:red;"> Username {{ .Username}} is already taken! </h4>
+                </div>            
+            {{end}}
 
                 <label for="psw" class = "words"><b>Email</b></label>
                 <input type="text" placeholder="Enter Email" name="email" required>

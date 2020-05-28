@@ -13,7 +13,7 @@ import (
 
 //Method to connect to a mysql database
 func connectToDB() *sql.DB{
-	dBConnection, err := sql.Open("mysql", "root:nintendowiiu000@/webapp")
+	dBConnection, err := sql.Open("mysql", getDBUsername() + ":" + getDBPassword() + "@/" + getDBName())
 	if err != nil {
 		log.Fatal("Connection Failed!!")
 	}
